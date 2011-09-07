@@ -47,7 +47,7 @@ class RCVUserRegistration
 	 *	Hook into the registration form and output a new form field.
 	 *
 	 *	@author		Nate Jacobs
-	 *	@since		1.0
+	 *	@since		0.1
 	 */
 	public function add_registration_field()
 	{
@@ -66,7 +66,7 @@ class RCVUserRegistration
 	 *	Validate the registration code. If invalid give error, if valid register user.
 	 *
 	 *	@author		Nate Jacobs
-	 *	@since		1.0
+	 *	@since		0.1
 	 */
 	public function check_reg_code( $errors, $login, $email )
 	{
@@ -96,7 +96,7 @@ class RCVUserRegistration
 	 *	Takes the user entered registration code and removes it from the options table.
 	 *
 	 *	@author		Nate Jacobs
-	 *	@since		1.0
+	 *	@since		0.1
 	 */
 	public function update_reg_codes()
 	{
