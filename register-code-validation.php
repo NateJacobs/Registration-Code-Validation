@@ -3,7 +3,7 @@
  *	Plugin Name: Registration Code Validation
  *	Plugin URI: 
  *	Description: Takes an array of registration codes and validates new user registrations based upon the code the user enters. If the code is valid and used to register, it is then removed from the list of valid codes.
- *	Version: 0.2
+ *	Version: 0.3
  *	License: GPL V2
  *	Author: Nate Jacobs <nate@natejacobs.org>
  *	Author URI: http://natejacobs.org
@@ -18,10 +18,10 @@ class RCVUserRegistration
 	// hook into specific actions for registration forms
 	public function __construct()
 	{
-		add_action( 'register_form', array( __CLASS__, 'add_registration_field' ) );
-		add_action( 'registration_errors', array( __CLASS__, 'check_reg_code' ), 10, 3 );
-		add_action( 'user_register', array( __CLASS__, 'update_reg_codes' ) );
-		register_activation_hook( __FILE__, array( __CLASS__, 'activation' ) );
+		add_action( 'register_form', array( $this, 'add_registration_field' ) );
+		add_action( 'registration_errors', array( $this, 'check_reg_code' ), 10, 3 );
+		add_action( 'user_register', array( $this, 'update_reg_codes' ) );
+		register_activation_hook( __FILE__, array( $this, 'activation' ) );
 	}
 	
 	/** 
@@ -40,9 +40,9 @@ class RCVUserRegistration
 		$string_length = 10;
 		$number_of_strings = 10;
 		$existing_strings = '';
-		$reg_codes = explode( ',', self::createRandomStringCollection( $string_length, $number_of_strings, $character_set, $existing_strings ) );
+		$reg_codes = explode( ',', $this->createRandomStringCollection( $string_length, $number_of_strings, $character_set, $existing_strings ) );
 		// saves the registration codes in the wp_options table
-		add_option( 'my_registration_codes', $reg_codes );
+		add_option( 'reg_validation_registration_codes', $reg_codes );
 	}
 	
 	/** 
@@ -111,10 +111,10 @@ class RCVUserRegistration
 	  $string_collection = '';
 	  for ( $i = 1; $i <= $number_of_strings; $i++ ) 
 	  {
-	    $random_string = self::createRandomString( $string_length, $character_set );
-	    while (!self::validUniqueString( $string_collection, $random_string, $existing_strings ) ) 
+	    $random_string = $this->createRandomString( $string_length, $character_set );
+	    while (!$this->validUniqueString( $string_collection, $random_string, $existing_strings ) ) 
 	    {
-	      $random_string = self::createRandomString( $string_length, $character_set );
+	      $random_string = $this->createRandomString( $string_length, $character_set );
 	    }
 	    $string_collection .= ( !strlen($string_collection ) ) ? $random_string : ", " . $random_string;
 	  }
@@ -159,7 +159,7 @@ class RCVUserRegistration
 		else
 		{
 			// okay so there is a registration code. Lets get the valid codes from the options table
-			$my_codes = get_option( 'my_registration_codes' );
+			$my_codes = get_option( 'reg_validation_registration_codes' );
 			// is the registration code the user entered in the list of valid ones from the options table?
 			if( !in_array( $_POST['reg-code'], $my_codes ) )
 				// sorry, it isn't. Go ahead and pass an error back.
@@ -181,14 +181,14 @@ class RCVUserRegistration
 	public function update_reg_codes()
 	{
 		// get the registration codes again
-		$my_codes = get_option( 'my_registration_codes' );
+		$my_codes = get_option( 'reg_validation_registration_codes' );
 		// get the key of the user entered registration code, then delete that value from the valid code array
 		if( ( $key = array_search( $_POST['reg-code'], $my_codes ) ) !== false )
 			unset( $my_codes[$key] );
 		// reindex the valid code array
 		$my_new_codes = array_values( $my_codes );
 		// store the updated array back in the options table
-		update_option( 'my_registration_codes', $my_new_codes );
+		update_option( 'reg_validation_registration_codes', $my_new_codes );
 	}
 }
 new RCVUserRegistration();
