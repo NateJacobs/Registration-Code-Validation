@@ -1,5 +1,5 @@
 ##Registration Validation Code##
-This is a WordPress plugin. It validates a new user registration off a set of predefined validation codes.
+This is a WordPress plugin. It validates a new user registration off a set of predefined validation codes. This does not work with multi-site. 
 
 ###Future Development###
 Next version - probably will be 1.0 - will create a settings page to allow for a user to decide how many registration codes to generate.
@@ -7,6 +7,10 @@ Next version - probably will be 1.0 - will create a settings page to allow for a
 ###Changelog###
 
 == Changelog ==
+
+= 0.3 =
+* Changed __CLASS__ to $this
+* Changed meta_key name to be more unique
  
 = 0.2 =
 * Added code generation with three new functions
